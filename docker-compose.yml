@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+#  evendo-viator:
+#    container_name: evendo-viator
+#    build: .
+#    restart: always
+#    env_file: .env
+#    ports:
+#      - 8001:8001
+#    depends_on:
+#      - "scr_mongo"
+#    networks:
+#      - evendo
+  scr_mongo:
+    image: mongo:latest
+    container_name: scr_mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=evendo_mongodb_username
+      - MONGO_INITDB_ROOT_PASSWORD=evendo_mongodb_password
+    ports:
+      - "27017:27017"
+    networks:
+      - evendo
+    volumes:
+      - ./mongodb:/data/db
+networks:
+  evendo:
+    name: evendo
