@@ -10,10 +10,6 @@ import (
 	"evendo-viator/pkg/repo"
 	"evendo-viator/pkg/utils"
 	"fmt"
-	"github.com/carlescere/scheduler"
-	"gitlab.com/jfcore/common/ginext"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"math"
 	"net/http"
@@ -21,6 +17,11 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/carlescere/scheduler"
+	"gitlab.com/jfcore/common/ginext"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CronJobHandler struct {
@@ -83,7 +84,7 @@ func (h *CronJobHandler) GetProductFromDestinationList() (err error) {
 	destinationListDetail := destinationList.Data
 	var destinationListDetailCountry []modelAPI.APIDestinationDetail
 	for _, destination := range destinationListDetail {
-		if utils.IntContains(utils.ProvinceIDList, destination.DestinationID) {
+		if utils.IntContains([]int{13, 67}, destination.DestinationID) {
 			destinationListDetailCountry = append(destinationListDetailCountry, destination)
 		}
 	}
@@ -125,9 +126,6 @@ func (h *CronJobHandler) GetProductFromDestinationList() (err error) {
 
 func (h *CronJobHandler) GetDataBasedOnDestinationList(destinationListDetail []modelAPI.APIDestinationDetail, mongoClient *mongo.Client) {
 	for _, destination := range destinationListDetail {
-		if utils.IntContains(utils.InsertedID, destination.DestinationID) {
-			continue
-		}
 		log.Println("====================> " + fmt.Sprint(destination.DestinationID))
 		numberOfProductPerThread := conf.GetConfig().NumberOfProductPerThread
 		numberOfProductPerThreadParsed, err := strconv.Atoi(numberOfProductPerThread)
@@ -239,7 +237,7 @@ func (h *CronJobHandler) InsertProduct(mongoClient *mongo.Client, productList *m
 	//var wg sync.WaitGroup
 	//wg.Add(len(productList.Products))
 	for _, product := range productList.Products {
-		if h.ProductMongoDB.GetOne(mongoClient, product.ProductCode, fmt.Sprint(destination.ParentID)) {
+		if h.ProductMongoDB.GetOne(mongoClient, product.ProductCode, fmt.Sprint(destination.DestinationID)) {
 			continue
 			//productDetail, err := h.ViatorAPIHandler.GetProductByCode(product.ProductCode)
 			//if err != nil {
@@ -277,7 +275,7 @@ func (h *CronJobHandler) InsertProduct(mongoClient *mongo.Client, productList *m
 			"supplier":     productSupplier,
 			"location":     locationDetail,
 		}
-		go h.ProductMongoDB.Create(mongoClient, product.ProductCode, insertRequest, fmt.Sprint(destination.ParentID))
+		go h.ProductMongoDB.Create(mongoClient, product.ProductCode, insertRequest, fmt.Sprint(destination.DestinationID))
 	}
 }
 
