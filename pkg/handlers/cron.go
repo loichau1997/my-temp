@@ -84,7 +84,7 @@ func (h *CronJobHandler) GetProductFromDestinationList() (err error) {
 	destinationListDetail := destinationList.Data
 	var destinationListDetailCountry []modelAPI.APIDestinationDetail
 	for _, destination := range destinationListDetail {
-		if utils.IntContains([]int{13, 67}, destination.DestinationID) {
+		if utils.IntContains(utils.ProvinceIDList, destination.DestinationID) {
 			destinationListDetailCountry = append(destinationListDetailCountry, destination)
 		}
 	}
@@ -237,7 +237,7 @@ func (h *CronJobHandler) InsertProduct(mongoClient *mongo.Client, productList *m
 	//var wg sync.WaitGroup
 	//wg.Add(len(productList.Products))
 	for _, product := range productList.Products {
-		if h.ProductMongoDB.GetOne(mongoClient, product.ProductCode, fmt.Sprint(destination.DestinationID)) {
+		if h.ProductMongoDB.GetOne(mongoClient, product.ProductCode, fmt.Sprint(destination.ParentID)) {
 			continue
 			//productDetail, err := h.ViatorAPIHandler.GetProductByCode(product.ProductCode)
 			//if err != nil {
@@ -275,7 +275,7 @@ func (h *CronJobHandler) InsertProduct(mongoClient *mongo.Client, productList *m
 			"supplier":     productSupplier,
 			"location":     locationDetail,
 		}
-		go h.ProductMongoDB.Create(mongoClient, product.ProductCode, insertRequest, fmt.Sprint(destination.DestinationID))
+		go h.ProductMongoDB.Create(mongoClient, product.ProductCode, insertRequest, fmt.Sprint(destination.ParentID))
 	}
 }
 

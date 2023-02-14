@@ -4,12 +4,12 @@ import "github.com/caarlos0/env/v6"
 
 // AppConfig presents app conf
 type AppConfig struct {
-	Port string `env:"PORT" envDefault:"8002"`
+	Port string `env:"PORT" envDefault:"8001"`
 	//DB CONFIG
 	LogFormat string `env:"LOG_FORMAT" envDefault:"127.0.0.1"`
 
 	EnableDB                 string `env:"ENABLE_DB" envDefault:"false"`
-	CronJobThread            string `env:"CRONJOB_THREAD" envDefault:"4"`
+	CronJobThread            string `env:"CRONJOB_THREAD" envDefault:"2"`
 	NumberOfProductPerThread string `env:"NUMBER_OF_PRODUCT_BY_THREAD" envDefault:"100"`
 	MongoHost                string `env:"MONGO_HOST" envDefault:"127.0.0.1"`
 	MongoPort                string `env:"MONGO_PORT" envDefault:"27017"`
